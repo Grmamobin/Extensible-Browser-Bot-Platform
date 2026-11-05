@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser Bot Platform</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <h1>Platform</h1>
+    <div>
+        <p>Choose the option for solving captcha:</p>
+        <button id="btn-headful" class="headful">Headful</button>
+        <button id="btn-headless" class="headless">Headless</button>
+    </div>
+    
+    <div id="status-msg"></div>
+    <div id="progress-bar" class="hidden">
+        <div id="progress-fill"></div>
+    </div>
+
+    <div style="margin-top: 40px;">
+        <h2>Run History (Database)</h2>
+        <p>
+            Total Runs: <b>{{ total_history }}</b> | 
+            Successful: <b style="color: green;">{{ successful }}</b> | 
+            Failed: <b style="color: red;">{{ failed }}</b>
+        </p>
+
+        <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; text-align: left; border-collapse: collapse;">
+            <thead style="background-color: #f2f2f2;">
+                <tr>
+                    <th>ID</th>
+                    <th>Challenge ID</th>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for run in history %}
+                <tr>
+                    <td>{{ run['id'] }}</td>
+                    <td>{{ run['challenge_id'] or "None" }}</td>
+                    <td>{{ run['username'] }}</td>
+                    <td>{{ run['password'] }}</td>
+                    <td>
+                        {{ run['status'] }}
+                    </td>
+                    
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" style="text-align: center;">No runs found in database yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script src="/static/script.js"></script>
+  </body>
+</html>
