@@ -14,8 +14,10 @@ app.static_folder = 'static'
 load_dotenv()
 email_ = os.getenv("ARCA_USERNAME")
 password_ = os.getenv("ARCA_PASSWORD")
+from fakecaptcha_bot import FakeCaptchaBot
 BOT_REGISTRY = {
-    "arcaptcha": ARCaptchaBot
+    "arcaptcha": ARCaptchaBot,
+    "fakecaptch": FakeCaptchaBot, # <-- new robot
 }
 
 progress_status = {"value": 0, "status": "idle"}
@@ -55,7 +57,7 @@ def _run():
     def run_task():
         global is_running, progress_status
         
-        bot_class = BOT_REGISTRY.get("arcaptcha")
+        bot_class = BOT_REGISTRY.get(bot_name)
         bot = bot_class()
         start_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         

@@ -3,12 +3,13 @@ const btnHeadless = document.getElementById("btn-headless");
 const statusMsg = document.getElementById("status-msg");
 const progressBar = document.getElementById("progress-bar");
 const progressFill = document.getElementById("progress-fill");
-const botName = document.getElementById('bot-select').value;
 
 async function executeBot(mode) {
     btnHeadful.disabled = true;
     btnHeadless.disabled = true;
     statusMsg.textContent = "Starting...";
+    const botName = document.getElementById('bot-select').value;
+
 
     if (mode === "Headless") {
         progressBar.classList.remove("hidden");
