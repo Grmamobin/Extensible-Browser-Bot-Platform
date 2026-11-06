@@ -1,5 +1,6 @@
 # Extensible Browser Bot Platform
 
+### [Demo video](images/gif_success.mp4)
 
 ## Prerequisites
 
