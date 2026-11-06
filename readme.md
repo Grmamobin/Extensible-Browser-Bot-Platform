@@ -93,7 +93,7 @@ kill -9 <PID>
 ## Bonus
 For reducing CAPTCHA blocking, the best approach is to use the "Headful" option. 
 
-In "Headless" mode, the `navigator.webdriver` is hidden, so the automation fingerprint is hidden as well. Vice-versa, in **"Headful"** mode it is visible to humans and behaves like a mimic of human hand movement.
+In "Headless" mode, the `navigator.webdriver` is hidden, so the automation fingerprint is hidden as well. Vice-versa, in "Headful" mode it is visible to humans and behaves like a mimic of human hand movement.
 
 In Headful mode, the platform achieves *100% success rate* in solving the ARCaptcha puzzle. *(Unless you take the mouse and don't allow Selenium to finish its job! =] )*
 
