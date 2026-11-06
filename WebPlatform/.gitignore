@@ -1,0 +1,6 @@
+__pycache__/
+downloaded_files
+*.pyc
+*.db
+*.png
+.env

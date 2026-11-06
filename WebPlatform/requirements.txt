@@ -1,0 +1,6 @@
+Flask
+seleniumbase
+opencv-python
+numpy
+requests
+python-dotenv

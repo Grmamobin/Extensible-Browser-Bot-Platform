@@ -3,6 +3,7 @@ const btnHeadless = document.getElementById("btn-headless");
 const statusMsg = document.getElementById("status-msg");
 const progressBar = document.getElementById("progress-bar");
 const progressFill = document.getElementById("progress-fill");
+const botName = document.getElementById('bot-select').value;
 
 async function executeBot(mode) {
     btnHeadful.disabled = true;
@@ -18,7 +19,7 @@ async function executeBot(mode) {
         const response = await fetch("/api/run", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ mode: mode }),
+            body: JSON.stringify({ bot_name: botName, mode: mode }),
         });
 
         const result = await response.json();

@@ -1,0 +1,12 @@
+services:
+  bot-platform:
+    build: .
+    ports:
+      - "8000:8000" 
+      - "5901:5900"
+    env_file:
+      - .env
+    volumes:
+      - ./history_db.db:/app/history_db.db
+    shm_size: 2gb
+    restart: unless-stopped

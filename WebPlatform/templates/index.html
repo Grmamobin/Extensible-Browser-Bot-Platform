@@ -9,6 +9,14 @@
   <body>
     <h1>Platform</h1>
     <div>
+        <p>Choose a bot to run:</p>
+        <select id="bot-select" style="padding: 8px; font-size: 16px; margin-bottom: 15px;">
+            {% for bot in bots %}
+                <option value="{{ bot }}">{{ bot | capitalize }} Bot</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
         <p>Choose the option for solving captcha:</p>
         <button id="btn-headful" class="headful">Headful</button>
         <button id="btn-headless" class="headless">Headless</button>
@@ -20,38 +28,43 @@
     </div>
 
     <div style="margin-top: 40px;">
-        <h2>Run History (Database)</h2>
+        <h2>History (Database)</h2>
         <p>
             Total Runs: <b>{{ total_history }}</b> | 
             Successful: <b style="color: green;">{{ successful }}</b> | 
-            Failed: <b style="color: red;">{{ failed }}</b>
+            Failed/Blocked: <b style="color: red;">{{ failed }}</b>
         </p>
 
-        <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; text-align: left; border-collapse: collapse;">
+        <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; text-align: left; border-collapse: collapse; font-size: 14px;">
             <thead style="background-color: #f2f2f2;">
                 <tr>
                     <th>ID</th>
+                    <th>Bot Name</th>
+                    <th>Mode</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
                     <th>Challenge ID</th>
-                    <th>Username</th>
-                    <th>Password</th>
                     <th>Status</th>
+                    <th>Error Details</th>
                 </tr>
             </thead>
             <tbody>
                 {% for run in history %}
                 <tr>
                     <td>{{ run['id'] }}</td>
+                    <td>{{ run['bot_name'] }}</td>
+                    <td>{{ run['browser_mode'] }}</td>
+                    <td>{{ run['start_time'] }}</td>
+                    <td>{{ run['end_time'] }}</td>
                     <td>{{ run['challenge_id'] or "None" }}</td>
-                    <td>{{ run['username'] }}</td>
-                    <td>{{ run['password'] }}</td>
                     <td>
                         {{ run['status'] }}
                     </td>
-                    
+                    <td style="font-size: 12px; color: #666;">{{ run['error_details'][:50] if run['error_details'] else "" }}</td>
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="5" style="text-align: center;">No runs found in database yet.</td>
+                    <td colspan="8" style="text-align: center;">No runs found in database yet.</td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -1,48 +1,41 @@
 from flask import Flask, render_template, jsonify, request
-import sqlite3
 import threading
+import os
 import time
 import random
-# from selenium_bot import run_selenium_bot
+import datetime
+import database
+from dotenv import load_dotenv
+from selenium_bot import ARCaptchaBot
 
 app = Flask(__name__)
-app.template_folder = '.'
-app.static_folder = '.'
+app.template_folder = 'templates'
+app.static_folder = 'static'
+load_dotenv()
+email_ = os.getenv("ARCA_USERNAME")
+password_ = os.getenv("ARCA_PASSWORD")
+BOT_REGISTRY = {
+    "arcaptcha": ARCaptchaBot
+}
 
 progress_status = {"value": 0, "status": "idle"}
 is_running = False
 
-def get_db_connection():
-    conn = sqlite3.connect('history_db.db')
-    conn.row_factory = sqlite3.Row
-    return conn
-
 @app.route("/")
 def Platform():
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS History (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            mode TEXT,
-            challenge_id TEXT,
-            username TEXT,
-            password TEXT,
-            status TEXT
-        )
-    ''')
-    conn.commit()
-    
-    cursor.execute("SELECT * FROM History ORDER BY id DESC")
-    history = cursor.fetchall()
-    conn.close()
+    database.init_db()
+    history = database.get_all_runs()
+    total = len(history)
+    successful = sum(1 for h in history if h["status"] == "success")
+    failed = sum(1 for h in history if h["status"] in ["failed", "blocked"])
 
     return render_template(
         "index.html",
         history=history,
-        total_history=len(history),
-        successful=sum(1 for h in history if h["status"] == "success"),
-        failed=sum(1 for h in history if h["status"] == "failed")
+        total_history=total,
+        successful=successful,
+        failed=failed,
+        bots=list(BOT_REGISTRY.keys())
     )
 
 @app.route("/api/run", methods=["POST"])
@@ -52,7 +45,8 @@ def _run():
         return jsonify({"message": "A bot is already running."})
 
     data = request.get_json() or {}
-    mode = data.get("mode")
+    bot_name = data.get("bot_name", "arcaptcha")
+    mode = data.get("mode", "Headful")
     headless = (mode == "Headless")
     
     is_running = True
@@ -60,6 +54,10 @@ def _run():
 
     def run_task():
         global is_running, progress_status
+        
+        bot_class = BOT_REGISTRY.get("arcaptcha")
+        bot = bot_class()
+        start_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
         def update_progress():
             while is_running and progress_status["value"] < 95:
@@ -72,7 +70,22 @@ def _run():
         timer_thread = threading.Thread(target=update_progress)
         timer_thread.start()
         
-        # result = run_selenium_bot(headless=headless)
+        result = bot.run(headless=headless, username_sec=email_, password_sec=password_)
+
+        
+        end_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
+        database.save_run(
+            bot_name=bot.get_name(),
+            browser_mode=mode,
+            start_time=start_time,
+            end_time=end_time,
+            challenge_id=result.get("challenge_id"),
+            username=email_,
+            password=password_,
+            status=result.get("status"),
+            error_details=result.get("error", "")
+        )
         
         is_running = False
         progress_status["value"] = 100
@@ -87,4 +100,5 @@ def get_progress():
     return jsonify(progress_status)
 
 if __name__ == "__main__":
-    app.run(debug=False, port=5000)
+    database.init_db()
+    app.run(debug=False, host='0.0.0.0', port=8000)
