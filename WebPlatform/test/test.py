@@ -37,9 +37,6 @@ class MockFormFailBot(BaseBot):
         # Simulates a scenario where the captcha is solved, but the login credentials fail
         return {"status": "failed", "challenge_id": "987654321", "error": "Login form submission failed"}
 
-# ==========================================
-# Mock Bots for Advanced Tests
-# ==========================================
 
 class MockTimeoutDuringExtractionBot(BaseBot):
     def get_name(self): return "Timeout During Extraction Bot"
